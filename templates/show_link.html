@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Link Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style_valid.css') }}">
+</head>
+<body>
+  <!-- Happy GIF -->
+  <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdG0zOXR5djF6bzIzNThodzBicXN6eDhpejV0MDUxbXRoMHJ1MDI3ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/j9OQxgM2DS3rBn8hhB/giphy.gif" 
+       alt="Happy Face" class="happy-gif">
+
+  <div class="box top-box">
+    <h2>Your IP Info</h2>
+    <p>IP: {{ ip }} | Country: {{ country }}</p>
+  </div>
+
+  <div class="box bottom-box">
+    <h3>Here is your link:</h3>
+    <a href="{{ pastebin_url }}" target="_blank">{{ pastebin_url }}</a>
+  </div>
+</body>
+</html>

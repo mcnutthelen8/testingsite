@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Access Blocked</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style_block.css') }}">
+</head>
+<body>
+  <!-- Sad GIF -->
+  <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2NjZzJxMXBqaHptZ2hrYWttamRkamkzMG43cDdxZHV1azJwNGJidyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/3oKIPdF5sBePN9DYFG/giphy.gif" 
+       alt="Sad Face" class="sad-gif">
+
+  <div class="box top-box">
+    <h2>Your IP Info</h2>
+    <p>IP: {{ ip }} | Country: {{ country }}</p>
+  </div>
+
+  <div class="box bottom-box">
+    <h3>Access Denied</h3>
+    <p>We detected VPN/Proxy usage. The link cannot be shown.</p>
+    <p>If you think this is a mistake, Report <a href="http://t.me/ashen_rox">Here</a></p>
+  </div>
+</body>
+</html>
