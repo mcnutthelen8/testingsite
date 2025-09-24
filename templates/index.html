@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Checking IP...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style_block.css') }}">
+  <style>
+    /* Full screen overlay */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #0f0f0f; /* Dark background while loading */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 9999;
+      color: #fff;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    }
+
+    /* Spinner */
+    .spinner {
+      border: 6px solid rgba(255, 255, 255, 0.1);
+      border-top: 6px solid #57de5c;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Loading text animation */
+    .loading-text {
+      font-size: 20px;
+      letter-spacing: 1px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Checking your IP...</div>
+    <div class="loading-text" style="font-size:16px; margin-top:8px;">Please wait</div>
+  </div>
+
+  <div id="content" style="display:none;">
+    <!-- Content will be replaced dynamically -->
+  </div>
+
+<script>
+async function checkIP() {
+    const paste_id = "{{ paste_id }}";
+
+    try {
+        // Get visitor IP
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+        const visitor_ip = ipData.ip;
+
+        // Send IP to Flask backend
+        const res = await fetch('/check_ip', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({paste_id: paste_id, ip: visitor_ip})
+        });
+
+        const data = await res.json();
+        const contentDiv = document.getElementById("content");
+
+        if(data.status === "blocked") {
+            contentDiv.innerHTML = `
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExd2NjZzJxMXBqaHptZ2hrYWttamRkamkzMG43cDdxZHV1azJwNGJidyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/3oKIPdF5sBePN9DYFG/giphy.gif" alt="Sad Face" class="sad-gif">
+            <div class="box top-box">
+                <h2>Your IP Info</h2>
+                <p>IP: ${data.ip} | Country: ${data.country}</p>
+            </div>
+            <div class="box bottom-box">
+                <h3 class='accessdeb'>Access Denied</h3>
+                <p>We detected VPN/Proxy usage. The link cannot be shown.</p>
+                <p>If you think this is a mistake, Report <a href="http://t.me/ashen_rox">Here</a></p>
+            </div>`;
+        } else {
+            contentDiv.innerHTML = `
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExdG0zOXR5djF6bzIzNThodzBicXN6eDhpejV0MDUxbXRoMHJ1MDI3ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/j9OQxgM2DS3rBn8hhB/giphy.gif" alt="happy Face" class="happy-gif">
+            <div class="box top-box">
+                <h2>Your IP Info</h2>
+                <p>IP: ${data.ip} | Country: ${data.country}</p>
+            </div>
+            <div class="box bottom-box">
+                <h3 class='herelink'>Here is your link:</h3>
+                <a href="${data.pastebin_url}" target="_blank">${data.pastebin_url}</a>
+            </div>`;
+        }
+
+        document.getElementById("overlay").style.display = "none";
+        contentDiv.style.display = "block";
+
+    } catch(e) {
+        console.error(e);
+        document.getElementById("overlay").innerHTML = "<h1>Error checking IP</h1>";
+    }
+}
+
+// Run on page load
+checkIP();
+</script>
+</body>
+</html>
