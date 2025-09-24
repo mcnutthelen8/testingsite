@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Calculator</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial; max-width:720px; margin:40px auto; padding:0 16px; color:#111; }
+    .card { padding:24px; border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,0.08); background:white; }
+    input[type="number"]{padding:8px 10px;font-size:16px;width:120px}
+    select{padding:8px 10px;font-size:16px}
+    button{padding:8px 14px;font-size:16px;border-radius:8px;border:none;background:#2b6cb0;color:white;cursor:pointer}
+    .result{margin-top:16px;padding:12px;border-radius:8px;background:#f3f6ff}
+    .error{margin-top:16px;padding:12px;border-radius:8px;background:#fff0f0;color:#900}
+    label{display:inline-block;margin-right:8px}
+    .row{display:flex;gap:8px;align-items:center}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Simple Calculator</h1>
+    <p>Enter two numbers and choose an operation.</p>
+
+    <form action="{{ url_for('calc') }}" method="post" autocomplete="off">
+      <div class="row" style="margin-bottom:12px;">
+        <label>Number A</label>
+        <input type="number" step="any" name="a" value="{{ a }}" required>
+        <label>Number B</label>
+        <input type="number" step="any" name="b" value="{{ b }}" required>
+      </div>
+
+      <div class="row" style="margin-bottom:12px;">
+        <label>Operation</label>
+        <select name="op">
+          <option value="add" {% if op=='add' %}selected{% endif %}>Add (+)</option>
+          <option value="sub" {% if op=='sub' %}selected{% endif %}>Subtract (−)</option>
+          <option value="mul" {% if op=='mul' %}selected{% endif %}>Multiply (×)</option>
+          <option value="div" {% if op=='div' %}selected{% endif %}>Divide (÷)</option>
+        </select>
+        <button type="submit">Calculate</button>
+      </div>
+    </form>
+
+    {% if result is not none %}
+      <div class="result"><strong>Result:</strong> {{ result }}</div>
+    {% endif %}
+    {% if error %}
+      <div class="error"><strong>Error:</strong> {{ error }}</div>
+    {% endif %}
+
+    <hr style="margin:18px 0">
+    <small>Ready to deploy on Render / Railway / any Python host.</small>
+  </div>
+</body>
+</html>
