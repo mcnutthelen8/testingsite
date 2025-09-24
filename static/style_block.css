@@ -13,15 +13,17 @@
       padding: 16px;
     }
 
-    /* GIF Style */
-    .sad-gif {
-      width: 170px;
-      max-width: 30%;
-      margin-bottom: 20px;
-      border-radius: 12px;
-     
-      animation: float 2s ease-in-out infinite;
-    }
+  /* GIF inside the box */
+  .box .sad-gif, .happy-gif {
+    display: block;
+    margin: 0 auto 20px auto; /* center horizontally and add bottom margin */
+    width: 230px; /* slightly bigger */
+    max-width: 70%;
+    border-radius: 12px;
+    animation: float 2s ease-in-out infinite;
+
+  }
+
 
     @keyframes float {
       0%, 100% { transform: translateY(0); }
@@ -42,6 +44,11 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       border: 1px solid rgba(255,255,255,0.15);
     }
+  /* Adjust box padding to accommodate bigger GIF */
+  .box {
+    padding: 40px 40px 32px 40px; /* more top padding */
+  }
+
 
     .box:hover {
       transform: translateY(-6px);
@@ -63,7 +70,7 @@
     }
 
     /* Bottom Box */
-    .bottom-box h3 {
+    .bottom-box .accessdeb {
       font-size: 26px;
       margin-bottom: 16px;
       color: #ff4f4f;
@@ -101,11 +108,11 @@
     }
 
     a:link {
-    color: green;
+    color: orange;
     text-decoration: none;
     }
     a:visited {
-    color: green;
+    color: orange;
     }
     a:hover {
     color: orange; 
@@ -113,4 +120,17 @@
     a:active {
     color: red; 
     }
-  
+
+  .herelink {
+    font-size: 26px;
+    margin-bottom: 16px;
+    color: #57de5c;
+    text-shadow: 0 0 8px rgba(90, 236, 95, 0.7);
+    animation: glow2 1.5s infinite alternate;
+    }
+
+    /* Glow animation for "Access Denied" */
+    @keyframes glow2 {
+    0% { text-shadow: 0 0 8px rgba(76, 175, 80, 0.6); }
+    100% { text-shadow: 0 0 20px rgba(76, 175, 80, 1); }
+    }
