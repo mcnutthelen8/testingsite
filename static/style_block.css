@@ -14,14 +14,13 @@
     }
 
   /* GIF inside the box */
-  .box .sad-gif, .happy-gif {
+  .box .sad-gif {
     display: block;
     margin: 0 auto 20px auto; /* center horizontally and add bottom margin */
-    width: 230px; /* slightly bigger */
-    max-width: 70%;
+    width: 150px; /* slightly bigger */
+    max-width: 40%;
     border-radius: 12px;
     animation: float 2s ease-in-out infinite;
-
   }
 
 
@@ -70,7 +69,7 @@
     }
 
     /* Bottom Box */
-    .bottom-box .accessdeb {
+    .bottom-box h3 {
       font-size: 26px;
       margin-bottom: 16px;
       color: #ff4f4f;
@@ -108,11 +107,11 @@
     }
 
     a:link {
-    color: orange;
+    color: green;
     text-decoration: none;
     }
     a:visited {
-    color: orange;
+    color: green;
     }
     a:hover {
     color: orange; 
@@ -120,17 +119,4 @@
     a:active {
     color: red; 
     }
-
-  .herelink {
-    font-size: 26px;
-    margin-bottom: 16px;
-    color: #57de5c;
-    text-shadow: 0 0 8px rgba(90, 236, 95, 0.7);
-    animation: glow2 1.5s infinite alternate;
-    }
-
-    /* Glow animation for "Access Denied" */
-    @keyframes glow2 {
-    0% { text-shadow: 0 0 8px rgba(76, 175, 80, 0.6); }
-    100% { text-shadow: 0 0 20px rgba(76, 175, 80, 1); }
-    }
+    
