@@ -1,8 +1,7 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, request, redirect, url_for
 from pymongo import MongoClient
 import requests
 from datetime import datetime
-import pytz
 
 app = Flask(__name__)
 
@@ -15,15 +14,18 @@ maindb_collection = db["maindb"]
 # IPQualityScore API key
 ipqs_key = "Bfg1dzryVqbpSwtbxgWb1uVkXLrr1Nzr"
 
-def get_public_ip():
-    try:
-        ip = requests.get("https://api.ipify.org").text
-        return ip
-    except:
-        return None
-
 @app.route("/<paste_id>")
 def redirect_paste(paste_id):
+    # Serve checking page first
+    return render_template("checking.html", paste_id=paste_id)
+
+@app.route("/check/<paste_id>", methods=["POST"])
+def check_ip(paste_id):
+    # Get visitor IP from POST
+    visitor_ip = request.json.get("ip")
+    if not visitor_ip:
+        return "IP not provided", 400
+
     # Find document
     doc = maindb_collection.find_one({"type": "website"})
     if not doc:
@@ -40,13 +42,8 @@ def redirect_paste(paste_id):
     if not pastebin_url:
         return abort(404, "Link not found.")
 
-    # Get public IP
-    user_ip = get_public_ip()
-    if not user_ip:
-        user_ip = "Unknown"
-
     # Call IPQualityScore API
-    ipqs_url = f'https://ipqualityscore.com/api/json/ip/{ipqs_key}/{user_ip}?strictness=3&allow_public_access_points=true&lighter_penalties=true&mobile=true'
+    ipqs_url = f'https://ipqualityscore.com/api/json/ip/{ipqs_key}/{visitor_ip}?strictness=3&allow_public_access_points=true&lighter_penalties=true&mobile=true'
     try:
         r = requests.get(ipqs_url, timeout=5)
         ip_data = r.json()
@@ -57,20 +54,31 @@ def redirect_paste(paste_id):
     is_vpn = ip_data.get("vpn", False)
     is_proxy = ip_data.get("proxy", False)
 
-    # Get Sri Lanka timestamp
-    sl_timezone = pytz.timezone("Asia/Colombo")
-    timestamp = datetime.now(sl_timezone).strftime("%Y-%m-%d %H:%M:%S")
-
     # Log IP to MongoDB
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ip_list = doc.get("ip_list", {})
-    ip_list[user_ip] = timestamp
+    ip_list[visitor_ip] = timestamp
     maindb_collection.update_one({"_id": doc["_id"]}, {"$set": {"ip_list": ip_list}})
 
-    # Render page with IP info and Pastebin link if valid
-    if is_vpn:# or is_proxy:
-        return render_template("blocked.html", ip=user_ip, country=country, paste_id=paste_id)
+    # Redirect based on IP check
+    if is_vpn:  # or is_proxy
+        return {"redirect": url_for("blocked", paste_id=paste_id, ip=visitor_ip, country=country)}
     else:
-        return render_template("show_link.html", ip=user_ip, country=country, pastebin_url=pastebin_url)
+        return {"redirect": url_for("show_link", pastebin_url=pastebin_url, ip=visitor_ip, country=country)}
+
+@app.route("/blocked")
+def blocked():
+    ip = request.args.get("ip", "Unknown")
+    country = request.args.get("country", "N/A")
+    paste_id = request.args.get("paste_id")
+    return render_template("blocked.html", ip=ip, country=country, paste_id=paste_id)
+
+@app.route("/show_link")
+def show_link():
+    ip = request.args.get("ip", "Unknown")
+    country = request.args.get("country", "N/A")
+    pastebin_url = request.args.get("pastebin_url")
+    return render_template("show_link.html", ip=ip, country=country, pastebin_url=pastebin_url)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)

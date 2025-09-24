@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Checking IP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .loader {
+      border: 8px solid #222;
+      border-top: 8px solid #4caf50;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
+    p { font-size: 18px; color: #ccc; }
+  </style>
+</head>
+<body>
+  <div class="loader"></div>
+  <p>Checking your IP, please wait...</p>
+
+  <script>
+    const pasteId = "{{ paste_id }}";
+
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => {
+          const visitorIp = data.ip;
+
+          fetch(`/check/${pasteId}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ip: visitorIp })
+          })
+          .then(res => res.json())
+          .then(result => {
+              window.location.href = result.redirect;
+          })
+          .catch(err => console.error(err));
+      });
+  </script>
+</body>
+</html>
