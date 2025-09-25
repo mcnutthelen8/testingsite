@@ -12,7 +12,7 @@ db = client['MoneyFarmV10']
 maindb_collection = db["maindb"]
 
 # IPQualityScore API key
-ipqs_key = "Bfg1dzryVqbpSwtbxgWb1uVkXLrr1Nzr"
+ipqs_key = "BEPgiVi4XCx0URXqigTXonNwsLbkRdez"
 
 def get_visitor_ip():
     if "X-Forwarded-For" in request.headers:
@@ -69,3 +69,4 @@ def redirect_paste(paste_id):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000, debug=True)
+
